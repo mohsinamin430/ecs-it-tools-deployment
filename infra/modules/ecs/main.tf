@@ -1,6 +1,12 @@
 #ECS Cluster
 resource "aws_ecs_cluster" "ecs_threatapp" {
   name = "ecs_threatapp"
+   
+  setting {
+    name = "containerInsights"
+    value = "enabled"
+  }
+  tags = var.tags
 }
 
 resource "aws_ecs_cluster_capacity_providers" "ecs_threatapp_capacity_providers" {
@@ -37,7 +43,9 @@ resource "aws_ecs_task_definition" "ecs_threatapp_task" {
   container_definitions = jsonencode([
     {
       name      = "threatapp_container"
-      image     = "${data.aws_ecr_repository.threatapp_repo.repository_url}:${var.image_tag}"
+      image     = "666709165403.dkr.ecr.eu-west-2.amazonaws.com/threatapp_repo:3fe22ee97ca435133f6c8fa9e90c8fcbf8b73baa"
+      #"${data.aws_ecr_repository.threatapp_repo.repository_url}:image-tag"
+      # Uncomment the line above and remove the '#' to use the image from ECR with the specified tag
       essential = true
       portMappings = [
         {
@@ -58,8 +66,8 @@ resource "aws_ecs_service" "ecs_threatapp_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets         = [var.private_subnet_1_id, var.private_subnet_2_id]
-    security_groups = [aws_security_group.ecs_sg.id]
+    subnets          = var.private_subnet_ids
+    security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = false
   }
 
@@ -67,6 +75,11 @@ resource "aws_ecs_service" "ecs_threatapp_service" {
     target_group_arn = var.alb_tg_arn
     container_name   = "threatapp_container"
     container_port   = 8080
+  }
+
+   lifecycle {
+    ignore_changes = [
+      desired_count]
   }
 }
 
@@ -77,9 +90,9 @@ resource "aws_security_group" "ecs_sg" {
   vpc_id      = var.vpc_id
 
   ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
     security_groups = [var.alb_sg_id]
   }
 

@@ -44,7 +44,7 @@ jobs:
 
       - name: Check image tag
         run: |
-          echo "OIDC_IMAGE_TAG=$OIDC_IMAGE_TAG"
+          echo "image_tag=$OIDC_IMAGE_TAG"
           if [ -z "$OIDC_IMAGE_TAG" ]; then
             echo "Image tag is empty"
             exit 1

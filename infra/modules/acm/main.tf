@@ -6,28 +6,28 @@ resource "aws_route53_zone" "hosted_zone_threatapp" {
 resource "aws_route53domains_registered_domain" "domain" {
   domain_name = var.domain_name
 
-  name_server {  
+  name_server {
     name = aws_route53_zone.hosted_zone_threatapp.name_servers[0]
   }
 
-  name_server {  
+  name_server {
     name = aws_route53_zone.hosted_zone_threatapp.name_servers[1]
   }
 
-  name_server {  
+  name_server {
     name = aws_route53_zone.hosted_zone_threatapp.name_servers[2]
   }
 
-  name_server {  
+  name_server {
     name = aws_route53_zone.hosted_zone_threatapp.name_servers[3]
   }
 }
 
 #Create ACM certificate for the domain
 resource "aws_acm_certificate" "cert" {
-  domain_name       = var.domain_name
+  domain_name               = var.domain_name
   subject_alternative_names = ["ecs.${var.domain_name}"]
-  validation_method = "DNS"
+  validation_method         = "DNS"
 
   lifecycle {
     create_before_destroy = true
@@ -57,8 +57,8 @@ resource "aws_route53_record" "ecs" {
   name    = "ecs.${var.domain_name}"
   type    = "A"
   alias {
-    name = var.alb_dns_name
-    zone_id = var.alb_zone_id
+    name                   = var.alb_dns_name
+    zone_id                = var.alb_zone_id
     evaluate_target_health = true
   }
 }
@@ -69,19 +69,19 @@ resource "aws_route53_record" "root" {
   name    = var.domain_name
   type    = "A"
   alias {
-    name = var.alb_dns_name
-    zone_id = var.alb_zone_id
+    name                   = var.alb_dns_name
+    zone_id                = var.alb_zone_id
     evaluate_target_health = true
   }
 }
 
 #Create health check on port 80
 resource "aws_route53_health_check" "health_check" {
-  fqdn = "ecs.${var.domain_name}"
-  type = "HTTP"
-  resource_path = "/health"
-  port = 80
-  request_interval = 30
+  fqdn              = "ecs.${var.domain_name}"
+  type              = "HTTP"
+  resource_path     = "/health"
+  port              = 80
+  request_interval  = 30
   failure_threshold = 3
 }
 

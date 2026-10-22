@@ -1,25 +1,25 @@
 module "vpc" {
   source = "./modules/vpc"
+  tags   = var.tags
 }
 
 module "alb" {
   source = "./modules/alb"
 
-  vpc_id = module.vpc.vpc_id
-  public_subnet_1_id = module.vpc.public_subnet_1_id
-  public_subnet_2_id = module.vpc.public_subnet_2_id
+  vpc_id              = module.vpc.vpc_id
+  public_subnet_ids   = module.vpc.public_subnet_ids
+  private_subnet_ids  = module.vpc.private_subnet_ids
   acm_certificate_arn = module.acm.acm_certificate_arn
 }
 
 module "ecs" {
   source = "./modules/ecs"
 
-  vpc_id = module.vpc.vpc_id
-  private_subnet_1_id = module.vpc.private_subnet_1_id
-  private_subnet_2_id = module.vpc.private_subnet_2_id
-  alb_tg_arn = module.alb.alb_tg_arn
-  alb_sg_id = module.alb.alb_sg_id
-  image_tag = var.image_tag
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+  alb_tg_arn         = module.alb.alb_tg_arn
+  alb_sg_id          = module.alb.alb_sg_id
+  tags               = var.tags
 
   depends_on = [
     module.alb
@@ -30,5 +30,12 @@ module "acm" {
   source = "./modules/acm"
 
   alb_dns_name = module.alb.alb_dns_name
-  alb_zone_id = module.alb.alb_zone_id
+  alb_zone_id  = module.alb.alb_zone_id
+}
+
+module "auto-scaling" { 
+  source = "./modules/auto-scaling"
+
+  ecs_cluster = module.ecs.ecs_cluster
+  ecs_service = module.ecs.ecs_service
 }

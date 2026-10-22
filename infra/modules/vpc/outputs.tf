@@ -1,19 +1,15 @@
 output "vpc_id" {
-    value = aws_vpc.vpc_threatapp.id
+  value = aws_vpc.vpc_threatapp.id
 }
 
-output "public_subnet_1_id" {
-    value = aws_subnet.public_subnet_1.id
+output "private_subnet_ids" {
+  value = [for key, subnet in aws_subnet.ecs_subnets :
+    subnet.id
+  if var.ecs_subnets[key].type == "private"]
 }
 
-output "public_subnet_2_id" {
-    value = aws_subnet.public_subnet_2.id
-}
-
-output "private_subnet_1_id" {
-    value = aws_subnet.private_subnet_1.id
-}
-
-output "private_subnet_2_id" {
-    value = aws_subnet.private_subnet_2.id
+output "public_subnet_ids" {
+  value = [for key, subnet in aws_subnet.ecs_subnets :
+    subnet.id
+  if var.ecs_subnets[key].type == "public"]
 }
