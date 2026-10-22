@@ -61,11 +61,11 @@ jobs:
           run: |
             docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
-        - name: Add github sha to SSM. Used by terraform to deploy the latest image
-          uses: dwardu89/aws-ssm-parameter-store@v2.0.2
-          with:
-            ssm-path: "/OIDC/image_tag"
-            ssm-value: ${{ github.sha }}
-            aws-region: ${{ vars.AWS_REGION }}
-            ssm-value-type: "String"
-            ssm-value-overwrite: true
+        ###- name: Add github sha to SSM. Used by terraform to deploy the latest image
+        ###  uses: dwardu89/aws-ssm-parameter-store@v2.0.2
+        ###  with:
+        ###    ssm-path: "/OIDC/image_tag"
+        ###    ssm-value: ${{ github.sha }}
+        ###    aws-region: ${{ vars.AWS_REGION }}
+        ###    ssm-value-type: "String"
+        ###    ssm-value-overwrite: true
