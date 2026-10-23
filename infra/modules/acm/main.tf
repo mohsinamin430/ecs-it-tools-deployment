@@ -26,7 +26,7 @@ resource "aws_route53domains_registered_domain" "domain" {
 #Create ACM certificate for the domain
 resource "aws_acm_certificate" "cert" {
   domain_name               = var.domain_name
-  subject_alternative_names = ["ecs.${var.domain_name}"]
+  subject_alternative_names = ["${var.sub_domain}.${var.domain_name}"]
   validation_method         = "DNS"
 
   lifecycle {
@@ -54,7 +54,7 @@ resource "aws_route53_record" "cert_validation" {
 #A record for ecs.
 resource "aws_route53_record" "ecs" {
   zone_id = aws_route53_zone.hosted_zone_threatapp.zone_id
-  name    = "ecs.${var.domain_name}"
+  name    = "${var.sub_domain}.${var.domain_name}"
   type    = "A"
   alias {
     name                   = var.alb_dns_name
@@ -77,7 +77,7 @@ resource "aws_route53_record" "root" {
 
 #Create health check on port 80
 resource "aws_route53_health_check" "health_check" {
-  fqdn              = "ecs.${var.domain_name}"
+  fqdn              = "${var.sub_domain}.${var.domain_name}"
   type              = "HTTP"
   resource_path     = "/health"
   port              = 80

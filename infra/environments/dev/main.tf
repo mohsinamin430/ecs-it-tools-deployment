@@ -1,10 +1,10 @@
 module "vpc" {
-  source = "./modules/vpc"
+  source = "../../modules/vpc"
   tags   = var.tags
 }
 
 module "alb" {
-  source = "./modules/alb"
+  source = "../../modules/alb"
 
   vpc_id              = module.vpc.vpc_id
   public_subnet_ids   = module.vpc.public_subnet_ids
@@ -13,7 +13,7 @@ module "alb" {
 }
 
 module "ecs" {
-  source = "./modules/ecs"
+  source = "../../modules/ecs"
 
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnet_ids
@@ -27,14 +27,14 @@ module "ecs" {
 }
 
 module "acm" {
-  source = "./modules/acm"
+  source = "../../modules/acm"
 
   alb_dns_name = module.alb.alb_dns_name
   alb_zone_id  = module.alb.alb_zone_id
 }
 
 module "auto-scaling" { 
-  source = "./modules/auto-scaling"
+  source = "../../modules/auto-scaling"
 
   ecs_cluster = module.ecs.ecs_cluster
   ecs_service = module.ecs.ecs_service

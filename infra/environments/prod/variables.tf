@@ -10,3 +10,7 @@ variable "tags" {
     Project     = "ecs_deployment"
   }
 }
+
+variable "sub_domain" {
+  type    = string
+}
