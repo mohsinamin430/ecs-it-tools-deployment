@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'infra/**'
+      - 'infra/environments/prod/**'
     
 
 concurrency:
@@ -14,52 +14,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  get-ssm-parameter:
-    permissions:
-      contents: read
-      id-token: write
-
-    runs-on: ubuntu-latest
-
-    outputs:
-      image_tag: ${{ steps.get-tag.outputs.image_tag }}
-
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5.1.1
-        with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
-
-      - name: Get parameter
-        id: get-tag
-        run: |
-          OIDC_IMAGE_TAG=$(aws ssm get-parameter \
-            --name "/OIDC/image_tag" \
-            --with-decryption \
-            --query "Parameter.Value" \
-            --output text)
-
-          echo "image_tag=$OIDC_IMAGE_TAG" >> $GITHUB_OUTPUT
-
-      - name: Check image tag
-        run: |
-          echo "image_tag=$OIDC_IMAGE_TAG"
-          if [ -z "$OIDC_IMAGE_TAG" ]; then
-            echo "Image tag is empty"
-            exit 1
-          fi
-
-
+  
   terraform-plan-apply:
-    needs: get-ssm-parameter
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
     defaults:
       run:
-        working-directory: ./infra
+        working-directory: ./infra/environments/prod
 
     steps:
      - name: Checkout code
@@ -101,13 +64,13 @@ jobs:
      - name: checkov scan
        uses: bridgecrewio/checkov-action@v12
        with:
-         directory: ./infra
+         directory: ./infra/environments/prod
          framework: terraform
          severity-threshold: medium
          soft_fail: true
       
      - name: Terraform Plan
        id: plan
-       run: terraform plan -out=tfplan -var="image_tag=${{ needs.get-ssm-parameter.outputs.image_tag }}"
+       run: terraform plan -out=tfplan
      - name: Terraform Apply
        run: terraform apply -auto-approve tfplan
