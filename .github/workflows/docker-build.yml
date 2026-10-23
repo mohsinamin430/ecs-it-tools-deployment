@@ -25,6 +25,7 @@ jobs:
           ECR_REPOSITORY: threatapp_repo
           AWS_ACCOUNT_ID: 666709165403
           IMAGE_TAG: ${{ github.sha }}
+          TASK_DEFINITION_FAMILY: ecs_threatapp_task
         
         steps:
         - name: Checkout code
@@ -60,12 +61,22 @@ jobs:
         - name: Push image
           run: |
             docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+        
+        - name: Download current task definition
+          run: |
+            aws ecs describe-task-definition \
+            --task-definition ${{ env.TASK_DEFINITION_FAMILY }} \
+            --query taskDefinition > task-definition.json
 
-        ###- name: Add github sha to SSM. Used by terraform to deploy the latest image
-        ###  uses: dwardu89/aws-ssm-parameter-store@v2.0.2
-        ###  with:
-        ###    ssm-path: "/OIDC/image_tag"
-        ###    ssm-value: ${{ github.sha }}
-        ###    aws-region: ${{ vars.AWS_REGION }}
-        ###    ssm-value-type: "String"
-        ###    ssm-value-overwrite: true
+        - name: Clean task definition
+          run: |
+            jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .deregisteredAt, .registeredBy, .enableFaultInjection)' task-definition.json > cleaned-task-definition.json
+            mv cleaned-task-definition.json task-definition.json
+        
+        - name: Render updated task definition
+          id: render-task-def
+          uses: aws-actions/amazon-ecs-render-task-definition@v1
+          with:
+            task-definition: task-definition.json
+            container-name: threatapp-container
+            image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
