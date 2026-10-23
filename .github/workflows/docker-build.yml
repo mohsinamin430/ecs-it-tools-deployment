@@ -68,15 +68,10 @@ jobs:
             --task-definition ${{ env.TASK_DEFINITION_FAMILY }} \
             --query taskDefinition > task-definition.json
 
-        - name: Clean task definition
-          run: |
-            jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .deregisteredAt, .registeredBy, .enableFaultInjection)' task-definition.json > cleaned-task-definition.json
-            mv cleaned-task-definition.json task-definition.json
-        
         - name: Render updated task definition
           id: render-task-def
           uses: aws-actions/amazon-ecs-render-task-definition@v1
           with:
             task-definition: task-definition.json
-            container-name: threatapp-container
+            container-name: threatapp_container
             image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
