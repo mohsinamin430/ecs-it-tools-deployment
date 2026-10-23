@@ -25,6 +25,7 @@ FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
 COPY /app/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --chown=nginx:nginx --from=builder /app/build /usr/share/nginx/html
 
+#chane to non-root
 USER nginx
 
 #expose port
