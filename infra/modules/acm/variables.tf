@@ -12,6 +12,6 @@ variable "alb_zone_id" {
 }
 
 variable "sub_domain" {
-  type = string
+  type    = string
   default = "ecs"
 }

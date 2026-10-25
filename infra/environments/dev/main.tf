@@ -33,7 +33,7 @@ module "acm" {
   alb_zone_id  = module.alb.alb_zone_id
 }
 
-module "auto-scaling" { 
+module "auto-scaling" {
   source = "../../modules/auto-scaling"
 
   ecs_cluster = module.ecs.ecs_cluster

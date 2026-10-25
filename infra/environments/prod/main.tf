@@ -20,6 +20,9 @@ module "ecs" {
   alb_tg_arn         = module.alb.alb_tg_arn
   alb_sg_id          = module.alb.alb_sg_id
   tags               = var.tags
+  cpu                = var.cpu
+  memory             = var.memory
+  desired_count      = var.desired_count
 
   depends_on = [
     module.alb
@@ -34,7 +37,7 @@ module "acm" {
   sub_domain   = var.sub_domain
 }
 
-module "auto-scaling" { 
+module "auto-scaling" {
   source = "../../modules/auto-scaling"
 
   ecs_cluster = module.ecs.ecs_cluster

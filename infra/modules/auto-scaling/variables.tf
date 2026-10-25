@@ -1,7 +1,7 @@
 variable "ecs_cluster" {
-  type        = string
+  type = string
 }
 
 variable "ecs_service" {
-  type        = string
+  type = string
 }

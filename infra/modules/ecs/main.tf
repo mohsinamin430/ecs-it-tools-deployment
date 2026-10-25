@@ -1,9 +1,9 @@
 #ECS Cluster
 resource "aws_ecs_cluster" "ecs_threatapp" {
   name = "ecs_threatapp"
-   
+
   setting {
-    name = "containerInsights"
+    name  = "containerInsights"
     value = "enabled"
   }
   tags = var.tags
@@ -36,14 +36,14 @@ resource "aws_ecs_task_definition" "ecs_threatapp_task" {
   family                   = "ecs_threatapp_task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = var.cpu    #variable
+  memory                   = var.memory #variable
   execution_role_arn       = data.aws_iam_role.ecs_task_execution_role.arn
 
   container_definitions = jsonencode([
     {
-      name      = "threatapp_container"
-      image     = "666709165403.dkr.ecr.eu-west-2.amazonaws.com/threatapp_repo:3fe22ee97ca435133f6c8fa9e90c8fcbf8b73baa"
+      name  = "threatapp_container"
+      image = "666709165403.dkr.ecr.eu-west-2.amazonaws.com/threatapp_repo:3fe22ee97ca435133f6c8fa9e90c8fcbf8b73baa"
       #"${data.aws_ecr_repository.threatapp_repo.repository_url}:image-tag"
       # Uncomment the line above and remove the '#' to use the image from ECR with the specified tag
       essential = true
@@ -62,7 +62,7 @@ resource "aws_ecs_service" "ecs_threatapp_service" {
   name            = "ecs_threatapp_service"
   cluster         = aws_ecs_cluster.ecs_threatapp.id
   task_definition = aws_ecs_task_definition.ecs_threatapp_task.arn
-  desired_count   = 1
+  desired_count   = var.desired_count #variable
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -77,9 +77,9 @@ resource "aws_ecs_service" "ecs_threatapp_service" {
     container_port   = 8080
   }
 
-   lifecycle {
+  lifecycle {
     ignore_changes = [
-      desired_count]
+    desired_count]
   }
 }
 

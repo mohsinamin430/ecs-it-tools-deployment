@@ -1,3 +1,21 @@
+variable "cpu" {
+  description = "CPU units for the ECS task"
+  type        = string
+  default     = "256"
+}
+
+variable "memory" {
+  description = "Memory for the ECS task"
+  type        = string
+  default     = "512"
+}
+
+variable "desired_count" {
+  description = "Desired number of ECS tasks"
+  type        = number
+  default     = 1
+}
+
 variable "private_subnet_ids" {
   description = "IDs of the private subnets for ECS service"
   type        = list(string)
