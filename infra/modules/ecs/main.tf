@@ -27,8 +27,9 @@ data "aws_iam_role" "ecs_task_execution_role" {
 }
 
 #Pull ECR repo URL
-data "aws_ecr_repository" "threatapp_repo" {
-  name = "threatapp_repo"
+data "aws_ecr_image" "latest" {
+  repository_name = "threatapp_repo"
+  most_recent     = true
 }
 
 #ECS Task Definition and Service
@@ -43,9 +44,7 @@ resource "aws_ecs_task_definition" "ecs_threatapp_task" {
   container_definitions = jsonencode([
     {
       name  = "threatapp_container"
-      image = "666709165403.dkr.ecr.eu-west-2.amazonaws.com/threatapp_repo:3fe22ee97ca435133f6c8fa9e90c8fcbf8b73baa"
-      #"${data.aws_ecr_repository.threatapp_repo.repository_url}:image-tag"
-      # Uncomment the line above and remove the '#' to use the image from ECR with the specified tag
+      image = data.aws_ecr_image.latest.image_digest
       essential = true
       portMappings = [
         {
@@ -79,7 +78,9 @@ resource "aws_ecs_service" "ecs_threatapp_service" {
 
   lifecycle {
     ignore_changes = [
-    desired_count]
+    desired_count,
+    task_definition
+  ]
   }
 }
 
