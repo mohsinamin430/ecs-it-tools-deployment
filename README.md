@@ -299,7 +299,7 @@ This project improved my understanding of:
 ## Screenshots
 
 ### App Working
-![App](images/app-running.gif)
+![App](images/app-running.png)
 
 ### Sucessful Workflows
 ![DockerBuild](images/build+push.png)
