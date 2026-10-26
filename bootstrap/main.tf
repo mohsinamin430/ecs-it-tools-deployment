@@ -1,6 +1,6 @@
 #Creates an ECR repository for the Docker image
 resource "aws_ecr_repository" "it_tools_repo" {
-  name                 = "it-tools_repo"
+  name                 = "it_tools_repo"
   image_tag_mutability = "IMMUTABLE"
 
   image_scanning_configuration {
