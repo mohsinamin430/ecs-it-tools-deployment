@@ -43,7 +43,7 @@ resource "aws_ecs_task_definition" "ecs_it_tools_task" {
   container_definitions = jsonencode([
     {
       name  = "it_tools_container"
-      image = data.aws_ecr_image.latest.image_digest
+      image = data.aws_ecr_image.latest.name
       essential = true
       portMappings = [
         {
