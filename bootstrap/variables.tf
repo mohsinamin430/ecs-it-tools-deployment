@@ -1,4 +1,4 @@
 variable "github_repository" {
-  type = string
+  type    = string
   default = "mohsinamin430/ecs-threat-composer-deployment"
 }

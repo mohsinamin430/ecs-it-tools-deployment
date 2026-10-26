@@ -61,4 +61,5 @@ resource "aws_iam_role" "github_actions" {
 resource "aws_iam_role_policy_attachment" "github_actions_admin" {
   role       = aws_iam_role.github_actions.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  #Admin access for GitHub Actions role. This will be changed to a more restrictive policy in production.
 }

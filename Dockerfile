@@ -10,20 +10,20 @@ FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
 
 #install dependencies
-COPY /app/package*.json /app/yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY app/package.json app/pnpm-lock.yaml ./
+RUN npm install --global pnpm && pnpm install --frozen-lockfile
 
 #cache dependencies
-COPY /app . 
+COPY app/ ./
 
-RUN yarn build
+RUN pnpm build
 
 
 ## STAGE 2
 FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
 
-COPY /app/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY --chown=nginx:nginx --from=builder /app/build /usr/share/nginx/html
+COPY app/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx --from=builder /app/dist /usr/share/nginx/html
 
 #change to non-root user for security purposes
 USER nginx

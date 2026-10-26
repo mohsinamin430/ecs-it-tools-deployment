@@ -1,8 +1,8 @@
-# ECS Threat Composer App Deployment
+# ECS IT-Tools App Deployment
 
 ## Overview
 
-This project deploys the Amazon Threat Composer application on Amazon ECS Fargate using Terraform. The infrastructure is provisioned using Infrastructure as Code and the deployment process is automated through GitHub Actions. The project demonstrates cloud networking, container deployment, CI/CD, and AWS security best practices.
+This project deploys the IT-Tools application on Amazon ECS Fargate using Terraform. The infrastructure is provisioned using Infrastructure as Code and the deployment process is automated through GitHub Actions. The project demonstrates cloud networking, container deployment, CI/CD, and AWS security best practices.
 
 ---
 
@@ -15,7 +15,7 @@ This project deploys the Amazon Threat Composer application on Amazon ECS Fargat
 ## Repository Structure
 
 ```text
-threat-composer/
+IT-Tools/
 ├── .dockerignore
 ├── .gitignore
 ├── Dockerfile
@@ -30,21 +30,30 @@ threat-composer/
 ├── bootstrap/
 │   ├── main.tf
 │   ├── provider.tf
-│   └── modules/
-│       ├── ecr/
-│       └── s3/
+│   └── variables.tf
+├── images/
 └── infra/
-    ├── main.tf
-    ├── outputs.tf
-    ├── provider.tf
-    ├── variables.tf
+    ├── environments/
+    │   ├── dev/
+    │   │   ├── main.tf
+    │   │   ├── provider.tf
+    │   │   └── variables.tf
+    │   ├── prod/
+    │   │   ├── main.tf
+    │   │   ├── provider.tf
+    │   │   ├── terraform.tfvars
+    │   │   └── variables.tf
+    │   └── staging/
+    │       ├── main.tf
+    │       ├── provider.tf
+    │       └── variables.tf
     └── modules/
         ├── acm/
         ├── alb/
+        ├── auto-scaling/
         ├── ecs/
         └── vpc/
 ```
-
 ---
 
 ## Prerequisites
@@ -62,20 +71,33 @@ Before deploying the project, ensure you have:
 ---
 ## Local Application Setup
 
-Do the following commands:
+The `app/` directory contains [IT-Tools](https://github.com/CorentinTh/it-tools), vendored from upstream commit `d505845f918e946ec300af7b36efc107e2f66e9e`. Its GPLv3 license is included in `app/LICENSE`.
+
+Use Node.js 20 and pnpm 9.11.0:
+
 ```bash
-yarn install
-yarn build
-yarn global add serve
-serve -s build
-```
-Navigate to
-```
-http://localhost:3000
+npm install --global pnpm@9.11.0
+cd app
+pnpm install --frozen-lockfile
+pnpm dev --host 0.0.0.0
 ```
 
+Open http://localhost:5173. For a production build, run `pnpm build` inside `app/`; Vite writes the site to `app/dist/`.
+
 ## Dockerfile
-Multi-Stage Dockerfile using nginx to serve static content with a small image blueprint (~30mb). Non-root user for improved security 
+
+From the repository root:
+
+```bash
+docker build -t it-tools .
+docker run --rm -p 8080:8080 it-tools
+```
+
+Open http://localhost:8080; http://localhost:8080/health returns `{"status":"ok"}`.
+
+The multi-stage build installs the pinned pnpm version, builds IT-Tools, and serves `dist/` with non-root Nginx on port 8080. The local Nginx configuration preserves the existing ECS and ALB health checks and supports client-side routing. AWS resource names retain their existing `threatapp` names so the application swap does not recreate infrastructure.
+
+Pushing these changes to `main` triggers the existing build, ECR push, and ECS deployment workflow. You can also trigger that workflow manually.
 
 ## Infrastructure Components
 
@@ -110,7 +132,7 @@ Multi-Stage Dockerfile using nginx to serve static content with a small image bl
 
 ### Application
 
-- Amazon Threat Composer
+- IT-Tools (Vue, Vite, and pnpm)
 
 ### Infrastructure
 
@@ -247,7 +269,6 @@ Some challenges encountered during development included:
 - Building Docker images with non root users in runner stage. Required nginxinc/nginx-unprivileged image
 - ECS image pull failures from ECR. This was due to the default tag was set to "latest" in terraform variables. Resolved by passing github ref through workflow
 - ACM certificate DNS validation
-- GitHub OIDC permission issues
 
 ---
 
@@ -261,15 +282,6 @@ Key design choices include:
 - ALB for HTTPS termination and traffic routing
 - Private subnets to improve application security
 
----
-
-## Future Improvements
-
-Potential enhancements include:
-
-- ECS Auto Scaling
-- CloudWatch dashboards and alarms
-- Dev and Prod workspaces on Terraform
 ---
 
 ## Lessons Learned

@@ -1,10 +1,27 @@
-node_modules
-.git/
-.gitignore
-Dockerfile
-.dockerignore
-.tmp/
-.cache/
-*.env*
-*.log
-*.lock
+# Only app/ and the root Dockerfile are needed for the build.
+**
+!Dockerfile
+!app/
+!app/**
+
+# Local dependencies and output from Vite, Vitest, and Playwright
+app/node_modules
+app/dist
+app/coverage
+app/test-results
+app/playwright-report
+app/playwright/.cache
+app/salt
+app/*.tsbuildinfo
+app/*.log
+
+# Local environment files
+app/.env
+app/.env.*
+
+# App metadata not needed by the root Dockerfile
+app/.vscode
+app/.dockerignore
+app/Dockerfile
+
+# Keep app/pnpm-lock.yaml, source Markdown, and public assets included.
