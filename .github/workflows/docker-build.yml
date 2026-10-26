@@ -24,7 +24,7 @@ jobs:
         runs-on: ubuntu-latest
 
         env:
-          ECR_REPOSITORY: it-tools_repo
+          ECR_REPOSITORY: it_tools_repo
           AWS_ACCOUNT_ID: 666709165403
           IMAGE_TAG: ${{ github.sha }}
           TASK_DEFINITION_FAMILY: ecs_it_tools_task #var
