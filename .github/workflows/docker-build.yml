@@ -28,7 +28,7 @@ jobs:
           AWS_ACCOUNT_ID: 666709165403
           IMAGE_TAG: ${{ github.sha }}
           TASK_DEFINITION_FAMILY: ecs_it_tools_task
-          ECS_SERVICE: ecs_it_tools_service
+          ECS_SERVICE: ecs_it_tools_service #var
           ECS_CLUSTER: ecs_it_tools #var
         steps:
         - name: Checkout code
