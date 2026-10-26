@@ -6,7 +6,6 @@ resource "aws_ecs_cluster" "ecs_it_tools" {
     name  = "containerInsights"
     value = "enabled"
   }
-  tags = var.tags
 }
 
 resource "aws_ecs_cluster_capacity_providers" "ecs_it_tools_capacity_providers" {

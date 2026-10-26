@@ -3,10 +3,6 @@ variable "vpc_cidrblock" {
   default = "10.0.0.0/16"
 }
 
-variable "tags" {
-  type = map(string)
-}
-
 variable "ecs_subnets" {
   type = map(object({
     cidr_block        = string

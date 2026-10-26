@@ -1,6 +1,5 @@
 module "vpc" {
   source = "../../modules/vpc"
-  tags   = var.tags
 }
 
 module "alb" {
@@ -19,11 +18,9 @@ module "ecs" {
   private_subnet_ids = module.vpc.private_subnet_ids
   alb_tg_arn         = module.alb.alb_tg_arn
   alb_sg_id          = module.alb.alb_sg_id
-  tags               = var.tags
   cpu                = var.cpu
   memory             = var.memory
   desired_count      = var.desired_count
-
   depends_on = [
     module.alb
   ]

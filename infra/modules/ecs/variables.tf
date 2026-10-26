@@ -35,8 +35,3 @@ variable "alb_sg_id" {
   description = "ID of the ALB security group"
   type        = string
 }
-
-variable "tags" {
-  description = "Tags to apply to ECS resources"
-  type        = map(string)
-}

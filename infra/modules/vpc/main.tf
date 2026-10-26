@@ -14,8 +14,6 @@ resource "aws_subnet" "ecs_subnets" {
   vpc_id            = aws_vpc.vpc_it_tools.id
   cidr_block        = each.value.cidr_block
   availability_zone = each.value.availability_zone
-
-  tags = var.tags
 }
 
 #NAT Gateway
