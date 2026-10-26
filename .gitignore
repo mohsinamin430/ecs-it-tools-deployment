@@ -22,7 +22,6 @@
 *.tfstate.*
 
 # Local Terraform variables and plans created by the workflows
-*.tfvars
 *.tfvars.json
 tfplan
 tfdestroy
