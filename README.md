@@ -71,9 +71,7 @@ Before deploying the project, ensure you have:
 ---
 ## Local Application Setup
 
-The `app/` directory contains [IT-Tools](https://github.com/CorentinTh/it-tools), vendored from upstream commit `d505845f918e946ec300af7b36efc107e2f66e9e`. Its GPLv3 license is included in `app/LICENSE`.
-
-Use Node.js 20 and pnpm 9.11.0:
+Use Node.js 20 and pnpm:
 
 ```bash
 npm install --global pnpm@9.11.0
