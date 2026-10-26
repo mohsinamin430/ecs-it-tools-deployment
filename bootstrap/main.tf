@@ -50,7 +50,7 @@ resource "aws_iam_role" "github_actions" {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           }
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:mohsinamin430/ecs-it-tools-deployment:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub" = "repo:mohsinamin430@226242024/ecs-it-tools-deployment@1261395558:ref:refs/heads/main"
           }
         }
       }
