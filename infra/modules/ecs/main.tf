@@ -1,6 +1,6 @@
 #ECS Cluster
-resource "aws_ecs_cluster" "ecs_threatapp" {
-  name = "ecs_threatapp"
+resource "aws_ecs_cluster" "ecs_it_tools" {
+  name = "ecs_it_tools"
 
   setting {
     name  = "containerInsights"
@@ -9,8 +9,8 @@ resource "aws_ecs_cluster" "ecs_threatapp" {
   tags = var.tags
 }
 
-resource "aws_ecs_cluster_capacity_providers" "ecs_threatapp_capacity_providers" {
-  cluster_name = aws_ecs_cluster.ecs_threatapp.name
+resource "aws_ecs_cluster_capacity_providers" "ecs_it_tools_capacity_providers" {
+  cluster_name = aws_ecs_cluster.ecs_it_tools.name
 
   capacity_providers = ["FARGATE"]
 
@@ -28,13 +28,13 @@ data "aws_iam_role" "ecs_task_execution_role" {
 
 #Pull ECR repo URL
 data "aws_ecr_image" "latest" {
-  repository_name = "threatapp_repo"
+  repository_name = "it_tools_repo"
   most_recent     = true
 }
 
 #ECS Task Definition and Service
-resource "aws_ecs_task_definition" "ecs_threatapp_task" {
-  family                   = "ecs_threatapp_task"
+resource "aws_ecs_task_definition" "ecs_it_tools_task" {
+  family                   = "ecs_it_tools_task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.cpu    #variable
@@ -43,7 +43,7 @@ resource "aws_ecs_task_definition" "ecs_threatapp_task" {
 
   container_definitions = jsonencode([
     {
-      name  = "threatapp_container"
+      name  = "it_tools_container"
       image = data.aws_ecr_image.latest.image_digest
       essential = true
       portMappings = [
@@ -57,10 +57,10 @@ resource "aws_ecs_task_definition" "ecs_threatapp_task" {
   ])
 }
 
-resource "aws_ecs_service" "ecs_threatapp_service" {
-  name            = "ecs_threatapp_service"
-  cluster         = aws_ecs_cluster.ecs_threatapp.id
-  task_definition = aws_ecs_task_definition.ecs_threatapp_task.arn
+resource "aws_ecs_service" "ecs_it_tools_service" {
+  name            = "ecs_it_tools_service"
+  cluster         = aws_ecs_cluster.ecs_it_tools.id
+  task_definition = aws_ecs_task_definition.ecs_it_tools_task.arn
   desired_count   = var.desired_count #variable
   launch_type     = "FARGATE"
 
@@ -72,7 +72,7 @@ resource "aws_ecs_service" "ecs_threatapp_service" {
 
   load_balancer {
     target_group_arn = var.alb_tg_arn
-    container_name   = "threatapp_container"
+    container_name   = "it_tools_container"
     container_port   = 8080
   }
 

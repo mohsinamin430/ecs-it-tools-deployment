@@ -1,16 +1,16 @@
 #ALB & target group
-resource "aws_lb" "alb_threatapp" {
+resource "aws_lb" "alb_it_tools" {
   load_balancer_type = "application"
-  name               = "alb-threatapp"
+  name               = "alb-it-tools"
   internal           = false
   security_groups    = [aws_security_group.alb_sg.id]
   subnets            = var.public_subnet_ids
 
 }
 
-resource "aws_lb_target_group" "tg_threatapp" {
+resource "aws_lb_target_group" "tg_it_tools" {
   target_type = "ip"
-  name        = "tg-threatapp"
+  name        = "tg-it-tools"
   port        = 8080
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -22,7 +22,7 @@ resource "aws_lb_target_group" "tg_threatapp" {
 }
 
 resource "aws_lb_listener" "http_listener" {
-  load_balancer_arn = aws_lb.alb_threatapp.arn
+  load_balancer_arn = aws_lb.alb_it_tools.arn
   port              = 80
   protocol          = "HTTP"
 
@@ -38,14 +38,14 @@ resource "aws_lb_listener" "http_listener" {
 }
 
 resource "aws_lb_listener" "https_listener" {
-  load_balancer_arn = aws_lb.alb_threatapp.arn
+  load_balancer_arn = aws_lb.alb_it_tools.arn
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
   certificate_arn   = var.acm_certificate_arn
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.tg_threatapp.arn
+    target_group_arn = aws_lb_target_group.tg_it_tools.arn
   }
 }
 

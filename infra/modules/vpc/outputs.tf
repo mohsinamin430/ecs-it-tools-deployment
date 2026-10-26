@@ -1,5 +1,5 @@
 output "vpc_id" {
-  value = aws_vpc.vpc_threatapp.id
+  value = aws_vpc.vpc_it_tools.id
 }
 
 output "private_subnet_ids" {

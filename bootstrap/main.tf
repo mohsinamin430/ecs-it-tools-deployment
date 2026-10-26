@@ -1,6 +1,6 @@
 #Creates an ECR repository for the Docker image
-resource "aws_ecr_repository" "threatapp_repo" {
-  name                 = "threatapp_repo"
+resource "aws_ecr_repository" "it_tools_repo" {
+  name                 = "it-tools_repo"
   image_tag_mutability = "IMMUTABLE"
 
   image_scanning_configuration {
@@ -10,10 +10,10 @@ resource "aws_ecr_repository" "threatapp_repo" {
 
 #s3 bucktet for terraform state
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "tfstate-threatapp"
+  bucket = "tfstate-it-tools"
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 

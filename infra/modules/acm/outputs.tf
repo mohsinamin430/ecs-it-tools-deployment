@@ -3,5 +3,5 @@ output "acm_certificate_arn" {
 }
 
 output "nameservers" {
-  value = aws_route53_zone.hosted_zone_threatapp.name_servers
+  value = aws_route53_zone.hosted_zone_it_tools.name_servers
 }

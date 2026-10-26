@@ -1,17 +1,17 @@
 #VPC
-resource "aws_vpc" "vpc_threatapp" {
+resource "aws_vpc" "vpc_it_tools" {
   cidr_block = var.vpc_cidrblock
 }
 
 #IGW
-resource "aws_internet_gateway" "igw_threatapp" {
-  vpc_id = aws_vpc.vpc_threatapp.id
+resource "aws_internet_gateway" "igw_it_tools" {
+  vpc_id = aws_vpc.vpc_it_tools.id
 }
 
 #Subnets
 resource "aws_subnet" "ecs_subnets" {
   for_each          = var.ecs_subnets
-  vpc_id            = aws_vpc.vpc_threatapp.id
+  vpc_id            = aws_vpc.vpc_it_tools.id
   cidr_block        = each.value.cidr_block
   availability_zone = each.value.availability_zone
 
@@ -23,29 +23,29 @@ resource "aws_eip" "nat_eip" {
   domain = "vpc"
 }
 
-resource "aws_nat_gateway" "nat_gateway_threatapp" {
+resource "aws_nat_gateway" "nat_gateway_it_tools" {
   availability_mode = "regional"
   allocation_id     = aws_eip.nat_eip.id
-  vpc_id            = aws_vpc.vpc_threatapp.id
+  vpc_id            = aws_vpc.vpc_it_tools.id
 
-  depends_on = [aws_internet_gateway.igw_threatapp]
+  depends_on = [aws_internet_gateway.igw_it_tools]
 }
 
 
 #Route Tables
 resource "aws_route_table" "public_route_table" {
-  vpc_id = aws_vpc.vpc_threatapp.id
+  vpc_id = aws_vpc.vpc_it_tools.id
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw_threatapp.id
+    gateway_id = aws_internet_gateway.igw_it_tools.id
   }
 }
 
 resource "aws_route_table" "private_route_table" {
-  vpc_id = aws_vpc.vpc_threatapp.id
+  vpc_id = aws_vpc.vpc_it_tools.id
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gateway_threatapp.id
+    nat_gateway_id = aws_nat_gateway.nat_gateway_it_tools.id
   }
 }
 

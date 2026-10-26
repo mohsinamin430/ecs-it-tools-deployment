@@ -1,5 +1,5 @@
 #Create route53 hosted zone
-resource "aws_route53_zone" "hosted_zone_threatapp" {
+resource "aws_route53_zone" "hosted_zone_it_tools" {
   name = var.domain_name
 }
 
@@ -7,19 +7,19 @@ resource "aws_route53domains_registered_domain" "domain" {
   domain_name = var.domain_name
 
   name_server {
-    name = aws_route53_zone.hosted_zone_threatapp.name_servers[0]
+    name = aws_route53_zone.hosted_zone_it_tools.name_servers[0]
   }
 
   name_server {
-    name = aws_route53_zone.hosted_zone_threatapp.name_servers[1]
+    name = aws_route53_zone.hosted_zone_it_tools.name_servers[1]
   }
 
   name_server {
-    name = aws_route53_zone.hosted_zone_threatapp.name_servers[2]
+    name = aws_route53_zone.hosted_zone_it_tools.name_servers[2]
   }
 
   name_server {
-    name = aws_route53_zone.hosted_zone_threatapp.name_servers[3]
+    name = aws_route53_zone.hosted_zone_it_tools.name_servers[3]
   }
 }
 
@@ -44,7 +44,7 @@ resource "aws_route53_record" "cert_validation" {
     }
   }
 
-  zone_id = aws_route53_zone.hosted_zone_threatapp.zone_id
+  zone_id = aws_route53_zone.hosted_zone_it_tools.zone_id
   name    = each.value.name
   type    = each.value.type
   records = [each.value.record]
@@ -53,7 +53,7 @@ resource "aws_route53_record" "cert_validation" {
 
 #A record for ecs.
 resource "aws_route53_record" "ecs" {
-  zone_id = aws_route53_zone.hosted_zone_threatapp.zone_id
+  zone_id = aws_route53_zone.hosted_zone_it_tools.zone_id
   name    = "${var.sub_domain}.${var.domain_name}"
   type    = "A"
   alias {
@@ -65,7 +65,7 @@ resource "aws_route53_record" "ecs" {
 
 #A record for root domain
 resource "aws_route53_record" "root" {
-  zone_id = aws_route53_zone.hosted_zone_threatapp.zone_id
+  zone_id = aws_route53_zone.hosted_zone_it_tools.zone_id
   name    = var.domain_name
   type    = "A"
   alias {
